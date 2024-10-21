@@ -1,9 +1,22 @@
 const addBtn = document.getElementById("addBtn");
 const taskInput = document.getElementById("taskInput");
+const todoTasks = document.getElementById("todoTasks");
+const switcher = document.getElementById("themeSwitcher");
+const main = document.querySelector("main");
 
 //get user token
 (async () => {
   if (!localStorage.getItem("userToken")) {
+    document.querySelector(".loader").classList.add("hidden");
+    todoTasks.innerHTML = `<p
+            class="text-white opacity-80 text-xl p-0 capitalize ">
+            your list is empty <br />
+            <span class="text-xs"
+              ><i class="fa-regular fa-pen-to-square"></i> Write down your daily
+              tasks.</span
+            >
+          </p>`;
+
     try {
       const response = await fetch(
         "https://todos.routemisr.com/api/v1/getApiKey"
@@ -102,8 +115,18 @@ function displayTodos(todos) {
             </div>
             <!-- todo -->`;
   }
+  todoTasks.innerHTML = todoBox;
 
-  document.getElementById("todoTasks").innerHTML = todoBox;
+  if (todoTasks.innerHTML === "") {
+    todoTasks.innerHTML = `<p
+            class="text-white opacity-80 text-xl p-0 capitalize ">
+            your list is empty <br />
+            <span class="text-xs"
+              ><i class="fa-regular fa-pen-to-square"></i> Write down your daily
+              tasks.</span
+            >
+          </p>`;
+  }
 }
 
 async function markTodo(todoId, index) {
@@ -155,8 +178,6 @@ async function removeTodo(todoId, index) {
 }
 
 //change theme
-const switcher = document.getElementById("themeSwitcher");
-const main = document.querySelector("main");
 
 switcher.addEventListener("click", function (e) {
   if (e.target.tagName === "SPAN") {
