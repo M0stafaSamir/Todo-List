@@ -3,13 +3,14 @@ const taskInput = document.getElementById("taskInput");
 const todoTasks = document.getElementById("todoTasks");
 const switcher = document.getElementById("themeSwitcher");
 const main = document.querySelector("main");
+const errMsg = document.getElementById("errMsg");
 
 //get user token
 (async () => {
   if (!localStorage.getItem("userToken")) {
     document.querySelector(".loader").classList.add("hidden");
     todoTasks.innerHTML = `<p
-            class="text-white opacity-80 text-xl p-0 capitalize ">
+            class="text-white opacity-80 text-xl p-0 capitalize mt-3">
             your list is empty <br />
             <span class="text-xs"
               ><i class="fa-regular fa-pen-to-square"></i> Write down your daily
@@ -51,25 +52,27 @@ async function getAllTodos() {
 getAllTodos();
 
 async function addTodo(todo) {
-  const addIcon = document.querySelector("#addBtn i");
-  addIcon.classList.remove("fa-plus");
-  addIcon.classList.add("fa-spinner", "fa-spin");
-  try {
-    const response = await fetch("https://todos.routemisr.com/api/v1/todos", {
-      method: "POST",
-      body: JSON.stringify(todo),
+  if (validateInput()) {
+    const addIcon = document.querySelector("#addBtn i");
+    addIcon.classList.remove("fa-plus");
+    addIcon.classList.add("fa-spinner", "fa-spin");
+    try {
+      const response = await fetch("https://todos.routemisr.com/api/v1/todos", {
+        method: "POST",
+        body: JSON.stringify(todo),
 
-      headers: { "content-type": "application/json" },
-    });
-    const result = await response.json();
-    console.log(result);
-    getAllTodos();
-  } catch (error) {
-    console.log(error);
-  } finally {
-    taskInput.value = null;
-    addIcon.classList.add("fa-plus");
-    addIcon.classList.remove("fa-spinner", "fa-spin");
+        headers: { "content-type": "application/json" },
+      });
+      const result = await response.json();
+      console.log(result);
+      getAllTodos();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      taskInput.value = null;
+      addIcon.classList.add("fa-plus");
+      addIcon.classList.remove("fa-spinner", "fa-spin");
+    }
   }
 }
 
@@ -119,7 +122,7 @@ function displayTodos(todos) {
 
   if (todoTasks.innerHTML === "") {
     todoTasks.innerHTML = `<p
-            class="text-white opacity-80 text-xl p-0 capitalize ">
+            class="text-white opacity-80 text-xl p-0 capitalize mt-3">
             your list is empty <br />
             <span class="text-xs"
               ><i class="fa-regular fa-pen-to-square"></i> Write down your daily
@@ -186,3 +189,20 @@ switcher.addEventListener("click", function (e) {
     main.classList.add(theme);
   }
 });
+
+//validation
+function validateInput() {
+  if (taskInput.value == "") {
+    errMsg.classList.replace("hidden", "block");
+    return false;
+  } else {
+    errMsg.classList.replace("block", "hidden");
+    return true;
+  }
+}
+
+function removeErrMsgOnInput() {
+  if (!taskInput.value == "" && errMsg.classList.contains("block")) {
+  }
+  errMsg.classList.replace("block", "hidden");
+}
